@@ -69,27 +69,27 @@ begin
     case ( MODULATION )
         1,2:
             begin
-                r_wr_addr2_start <= 10'h1;
-                r_inc_th         <=  2'h0;
-                r_inc_step       <=  3'h2;                
+                r_wr_addr2_start <= #Z 10'h1;
+                r_inc_th         <= #Z  2'h0;
+                r_inc_step       <= #Z  3'h2;                
             end
         4:  
             begin
-                r_wr_addr2_start <= 10'h2;
-                r_inc_th         <=  2'h1;
-                r_inc_step       <=  3'h3;                
+                r_wr_addr2_start <= #Z 10'h2;
+                r_inc_th         <= #Z  2'h1;
+                r_inc_step       <= #Z  3'h3;                
             end
         6:  
             begin
-                r_wr_addr2_start <= 10'h3;
-                r_inc_th         <=  2'h2;
-                r_inc_step       <=  3'h4;
+                r_wr_addr2_start <= #Z 10'h3;
+                r_inc_th         <= #Z  2'h2;
+                r_inc_step       <= #Z  3'h4;
             end
         default: 
             begin
-                r_wr_addr2_start <= 10'h1;
-                r_inc_th         <=  2'h0;
-                r_inc_step       <=  3'h0;                
+                r_wr_addr2_start <= #Z 10'h1;
+                r_inc_th         <= #Z  2'h0;
+                r_inc_step       <= #Z  3'h0;                
             end
     endcase
 end
@@ -98,37 +98,37 @@ always @( posedge CLK )
 begin
     if( !DATA_DV )
     begin
-        r_wr_addr_ss1 <= 10'h0;
-        r_wr_addr_ss2 <= r_wr_addr2_start;
-        r_inc_en <= 2'h0;
+        r_wr_addr_ss1 <= #Z 10'h0;
+        r_wr_addr_ss2 <= #Z r_wr_addr2_start;
+        r_inc_en <= #Z 2'h0;
     end
     else 
     begin
         if( r_inc_en < r_inc_th )
-            r_inc_en <= r_inc_en + 1'b1;
+            r_inc_en <= #Z r_inc_en + 1'b1;
         else
-            r_inc_en <= 2'h0;
+            r_inc_en <= #Z 2'h0;
             
-        r_wr_addr_ss1 <= (r_inc_en == r_inc_th ) ? r_wr_addr_ss1 + r_inc_step : r_wr_addr_ss1 + 10'h1;
-        r_wr_addr_ss2 <= (r_inc_en == r_inc_th ) ? r_wr_addr_ss2 + r_inc_step : r_wr_addr_ss2 + 10'h1;
+        r_wr_addr_ss1 <= #Z (r_inc_en == r_inc_th ) ? r_wr_addr_ss1 + r_inc_step : r_wr_addr_ss1 + 10'h1;
+        r_wr_addr_ss2 <= #Z (r_inc_en == r_inc_th ) ? r_wr_addr_ss2 + r_inc_step : r_wr_addr_ss2 + 10'h1;
             
-        r_ram_splitter[r_wr_addr_ss1] <= DATA_SS1;
-        r_ram_splitter[r_wr_addr_ss2] <= DATA_SS2;
+	r_ram_splitter[r_wr_addr_ss1] <= #Z DATA_SS1;
+	r_ram_splitter[r_wr_addr_ss2] <= #Z DATA_SS2;
     end
     
     if( r_wr_addr_ss1 == 10'h8 )
     begin
-        r_rd_addr_cnt <= DEPTH - 1;
-        r_rd_addr <= 10'h0;
-        r_data_out_dv  <= 1'b1;
+        r_rd_addr_cnt <= #Z DEPTH - 1;
+        r_rd_addr <= #Z 10'h0;
+        r_data_out_dv  <= #Z 1'b1;
     end
     else if( |r_rd_addr_cnt )
         begin
-            r_rd_addr_cnt <= r_rd_addr_cnt - 1'b1;
-            r_rd_addr <= r_rd_addr + 1'b1;
+            r_rd_addr_cnt <= #Z r_rd_addr_cnt - 1'b1;
+            r_rd_addr <= #Z r_rd_addr + 1'b1;
         end
         else
-            r_data_out_dv  <= 1'b0;
+            r_data_out_dv  <= #Z 1'b0;
 end
 
 
