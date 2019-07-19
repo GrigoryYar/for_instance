@@ -36,8 +36,9 @@ entity space_streams_splitter is
 end space_streams_splitter;
 
 architecture rtl of space_streams_splitter is
-   
+      
     constant DEPTH : natural := 2*52*MODULATION;
+    constant tZ : time    := 1 ns * Z;
 
     type  ram_splitter is array (DEPTH - 1 downto 0) of std_logic_vector (2 downto 0);
     signal r_ram_splitter : ram_splitter;
@@ -56,7 +57,7 @@ architecture rtl of space_streams_splitter is
     signal r_data_out_dv    : std_logic := '0';
 
 begin
-
+    
     DATA_OUT <= r_ram_splitter( to_integer(unsigned(r_rd_addr)) );
     DATA_OUT_DV <= r_data_out_dv; 
 
@@ -67,21 +68,21 @@ begin
         if ( CLK'event and CLK ='1') then
             case ( MODULATION ) is
                 when 1|2 =>
-                    r_wr_addr2_start <=  10d"1";
-                    r_inc_th         <=   2d"0";
-                    r_inc_step       <=   3d"2";                
+                    r_wr_addr2_start <=  10d"1" after tZ;
+                    r_inc_th         <=   2d"0" after tZ;
+                    r_inc_step       <=   3d"2" after tZ;                
                 when 4 =>
-                    r_wr_addr2_start <=  10d"2";
-                    r_inc_th         <=   2d"1";
-                    r_inc_step       <=   3d"3";                
+                    r_wr_addr2_start <=  10d"2" after tZ;
+                    r_inc_th         <=   2d"1" after tZ;
+                    r_inc_step       <=   3d"3" after tZ;                
                 when 6 =>                  
-                    r_wr_addr2_start <=  10d"3";
-                    r_inc_th         <=   2d"2";
-                    r_inc_step       <=   3d"4";
+                    r_wr_addr2_start <=  10d"3" after tZ;
+                    r_inc_th         <=   2d"2" after tZ;
+                    r_inc_step       <=   3d"4" after tZ;
                 when others =>            
-                    r_wr_addr2_start <=  10d"1";
-                    r_inc_th         <=   2d"0";
-                    r_inc_step       <=   3d"0";                
+                    r_wr_addr2_start <=  10d"1" after tZ;
+                    r_inc_th         <=   2d"0" after tZ;
+                    r_inc_step       <=   3d"0" after tZ;                
             end case;
 
        end if;
@@ -92,23 +93,23 @@ begin
     begin
         if( CLK'event and CLK ='1' ) then
             if( DATA_DV = '0' ) then
-                r_wr_addr_ss1 <= (others => '0');
-                r_wr_addr_ss2 <= r_wr_addr2_start;
+                r_wr_addr_ss1 <= (others => '0')  after tZ;
+                r_wr_addr_ss2 <= r_wr_addr2_start  after tZ;
                 r_inc_en <= 2d"0";
             else
                 if( r_inc_en < r_inc_th ) then
-                    r_inc_en <= r_inc_en + '1';
+                    r_inc_en <= r_inc_en + '1'  after tZ;
                 else
-                    r_inc_en <= 2d"0";
+                    r_inc_en <= 2d"0"  after tZ;
                 end if;
             
                 r_wr_addr_ss1 <= r_wr_addr_ss1 + r_inc_step when r_inc_en = r_inc_th
-                                 else r_wr_addr_ss1 + 1;
+                                 else r_wr_addr_ss1 + 1  after tZ;
                 r_wr_addr_ss2 <= r_wr_addr_ss2 + r_inc_step when r_inc_en = r_inc_th
-                                 else r_wr_addr_ss2 + 1;
+                                 else r_wr_addr_ss2 + 1  after tZ;
                     
-                r_ram_splitter( to_integer(unsigned(r_wr_addr_ss1)) ) <= DATA_SS1;
-                r_ram_splitter( to_integer(unsigned(r_wr_addr_ss2)) ) <= DATA_SS2;
+                r_ram_splitter( to_integer(unsigned(r_wr_addr_ss1)) ) <= DATA_SS1  after tZ;
+                r_ram_splitter( to_integer(unsigned(r_wr_addr_ss2)) ) <= DATA_SS2  after tZ;
             end if;
         end if;
     end process;
@@ -119,14 +120,14 @@ begin
         if( CLK'event and CLK ='1' ) then
         
             if( r_wr_addr_ss1 = 10d"8" ) then
-                r_rd_addr_cnt <= std_logic_vector(to_unsigned(DEPTH-1, 10));
-                r_rd_addr <= (others => '0');
-                r_data_out_dv  <= '1';
+                r_rd_addr_cnt <= std_logic_vector(to_unsigned(DEPTH-1, 10))  after tZ;
+                r_rd_addr <= (others => '0')  after tZ;
+                r_data_out_dv  <= '1'  after tZ;
             elsif ( r_rd_addr_cnt > 0 ) then
-                r_rd_addr_cnt <= r_rd_addr_cnt - 1;
-                r_rd_addr <= r_rd_addr + 1;
+                r_rd_addr_cnt <= r_rd_addr_cnt - 1  after tZ;
+                r_rd_addr <= r_rd_addr + 1  after tZ;
             else
-                r_data_out_dv  <= '0';
+                r_data_out_dv  <= '0'  after tZ;
             end if;
         
         end if;
