@@ -12,21 +12,21 @@
 
 /*
 space_streams_splitter
-	#(
-		.Z				( 0	),
+    #(
+        .Z              ( 0 ),
         .MODULATION     ( 1 )  // 1 - bpsk, 2 - qpsk, 4 - qam16, 6 - qam64
-     )
-	space_streams_splitter_inst
-	(
-		.CLK			(	), // in,  u[ 1], clock signal
+    )
+    space_streams_splitter_inst
+    (
+        .CLK            (   ), // in,  u[ 1], clock signal
 
         .DATA_SS1       (   ), // in,  u[ 3], space stream[1] data input
         .DATA_SS2       (   ), // in,  u[ 3], space stream[2] data input
-        .DATA_DV	    (   ), // in,  u[ 1], input valid
+        .DATA_DV        (   ), // in,  u[ 1], input valid
         
         .DATA_OUT       (   ), // out, u[ 3], splitter data out
         .DATA_OUT_DV    (   )  // out, u[ 1], out valid
-	);
+    );
 */
 
 module space_streams_splitter
