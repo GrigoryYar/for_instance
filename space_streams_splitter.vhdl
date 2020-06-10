@@ -4,7 +4,8 @@
 -- Function : Space Streams splitter
 -- Engineer : Grigory Polushkin
 -- Created  : 07.06.2019
---
+-- Modified : 10.06.2020
+-- 
 ----------------------------------------------------------------
 
 --`timescale 1ns / 100ps
